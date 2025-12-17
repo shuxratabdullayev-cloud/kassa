@@ -7,7 +7,7 @@
     <meta name="description" content="Kassaga naqd pul kirim orderini boshqarish tizimi - professional va zamonaviy">
     <meta name="keywords" content="kassa, naqd pul, kirim, qabul, accounting">
     <meta name="author" content="Cash Receipt System">
-    <title>Naqd Pul Kirim Order Tizimi</title>
+    <title>Kassa Tizimi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
             <div class="header-content">
                 <h1 class="header-title">
                     <span class="icon">💵</span>
-                    Naqd Pul Kirim Order Tizimi
+                    Kassa Tizimi
                 </h1>
                 <p class="header-subtitle">Kassaga naqd pul kirimini professional boshqarish</p>
             </div>
@@ -74,7 +74,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            
+
             <!-- SECTION 1: KIRIM (INCOME) -->
             <div id="income-section" class="tab-content active">
                 <!-- Add Receipt Form -->
@@ -84,7 +84,8 @@
                         <div class="form-grid">
                             <div class="form-group full-width">
                                 <label for="receiptNumber" class="form-label">Qabul Raqami</label>
-                                <input type="text" id="receiptNumber" class="form-input" readonly placeholder="Avtomatik">
+                                <input type="text" id="receiptNumber" class="form-input" readonly
+                                    placeholder="Avtomatik">
                             </div>
 
                             <div class="form-group">
@@ -116,20 +117,37 @@
                                 <label for="creditAccount" class="form-label">Kredit Schyoti *</label>
                                 <select id="creditAccount" class="form-input" required>
                                     <option value="">Tanlang</option>
-                                    <option value="4010">4010 - Xaridorlar va buyurtmachilar qarzi</option>
-                                    <option value="4220">4220 - Hisobdot shaxslar bo'yicha bo'naklar</option>
-                                    <option value="4310">4310 - Yetkazib beruvchilarga berilgan bo'naklar</option>
-                                    <option value="4720">4720 - Xodimlarga berilgan ssudalar</option>
-                                    <option value="4890">4890 - Boshqa qarzdorlar</option>
-                                    <option value="5110">5110 - Hisob-kitob schyoti (bank)</option>
-                                    <option value="6010">6010 - Yetkazib beruvchilar qarzi</option>
-                                    <option value="6310">6310 - Xaridorlardan olingan bo'naklar</option>
-                                    <option value="6410">6410 - Byudjet bilan hisob-kitob</option>
-                                    <option value="6710">6710 - Mehnat haqi to'lovi</option>
-                                    <option value="6990">6990 - Boshqa to'lovlar</option>
+                                    <option value="2610">2610 - Yaroqsizlikdan yo'qotishlar qiymati</option>
+                                    <option value="4010">4010 - Sotilgan mahsulot qarzi</option>
+                                    <option value="4110">4110 - Shu'ba korxonalardan olingan summalar</option>
+                                    <option value="4220">4220 - Hisobdor shaxslardan qaytarilgan (bo'nak)</option>
+                                    <option value="4310">4310 - Mol yetkazib beruvchilardan qaytgan bo'nak</option>
+                                    <option value="4610">4610 - Ustav kapitalidagi ulush (naqd)</option>
+                                    <option value="4710">4710 - Xodimlardan kreditga olingan tovarlar uchun</option>
+                                    <option value="4720">4720 - Xodimdan qaytarilgan qarz</option>
+                                    <option value="4730">4730 - Aybdor shaxslardan undirilgan kamomad</option>
+                                    <option value="4790">4790 - Mehnatga ortiqcha to'langan summalar</option>
+                                    <option value="4810">4810 - Moliyaviy ijara qarzi</option>
+                                    <option value="4830">4830 - Veksellar bo'yicha foizlar</option>
+                                    <option value="4840">4840 - Qimmatli qog'ozlar dividendlari</option>
+                                    <option value="4860">4860 - Ilgari taqdim etilgan da'volar (naqd)</option>
+                                    <option value="4890">4890 - Xonadon ijarachilari va kommunal</option>
+                                    <option value="5110">5110 - Bankdagi hisob-kitob schyotidan</option>
+                                    <option value="5530">5530 - Bankdagi maxsus schyotdan</option>
+                                    <option value="5710">5710 - Yo'lda deb hisoblangan pul mablag'lari</option>
+                                    <option value="6310">6310 - Tovarlar uchun xaridorlardan bo'nak</option>
+                                    <option value="6810">6810 - Yakka tartibda uy-joy qurish (qisqa)</option>
+                                    <option value="6830">6830 - Korxona obligatsiyalari tushumi</option>
+                                    <option value="7810">7810 - Yakka tartibda uy-joy qurish (uzoq)</option>
+                                    <option value="8330">8330 - Ustav kapitaliga naqd pul</option>
+                                    <option value="8810">8810-8890 - Maqsadli tushumlar</option>
                                     <option value="9010">9010 - Tayyor mahsulot sotish</option>
                                     <option value="9020">9020 - Tovarlar sotish</option>
                                     <option value="9030">9030 - Xizmatlar va ishlar</option>
+                                    <option value="9210">9210 - Asosiy vositalar sotish</option>
+                                    <option value="9220">9220 - Boshqa aktivlar sotish</option>
+                                    <option value="9380">9380 - Moliyaviy yordam</option>
+                                    <option value="9390">9390 - Inventarizatsiya ortiqcha pul</option>
                                 </select>
                             </div>
 
@@ -144,10 +162,10 @@
                         </button>
                     </form>
                 </section>
-                
+
                 <!-- Receipts Table (Existing) -->
                 <section class="table-section">
-                     <div class="section-header">
+                    <div class="section-header">
                         <h2 class="section-title">So'nggi Kirim Orderlar</h2>
                     </div>
                     <div class="table-container">
@@ -180,7 +198,8 @@
                         <div class="form-grid">
                             <div class="form-group full-width">
                                 <label class="form-label">Chiqim Raqami</label>
-                                <input type="text" id="expenseNumber" class="form-input" readonly placeholder="Avtomatik">
+                                <input type="text" id="expenseNumber" class="form-input" readonly
+                                    placeholder="Avtomatik">
                             </div>
 
                             <div class="form-group">
@@ -210,18 +229,42 @@
                                 <label class="form-label">Debit Schyoti (Xarajat) *</label>
                                 <select id="expenseDebitAccount" class="form-input" required>
                                     <option value="">Tanlang</option>
-                                    <option value="4210">4210 - Mehnat haqi bo'yicha bo'nak (Avans)</option>
-                                    <option value="4220">4220 - Xizmat safari xarajatlari</option>
-                                    <option value="5110">5110 - Bank hisob raqamiga topshirish</option>
-                                    <option value="6010">6010 - Yetkazib beruvchilarga to'lov</option>
-                                    <option value="6410">6410 - Soliqlar va yig'imlar</option>
-                                    <option value="6990">6990 - Boshqa to'lovlar</option>
+                                    <option value="0430">0430 - Dasturiy materiallar uchun to'lov</option>
+                                    <option value="0610">0610 - Qimmatli qog'ozlar uchun to'lov</option>
+                                    <option value="0930">0930 - Uzoq muddatli qarz berilganligi</option>
+                                    <option value="3110">3110 - Kelgusi davr xarajatlari</option>
+                                    <option value="4220">4220 - Xizmat safari uchun bo'nak</option>
+                                    <option value="4230">4230 - Umumxo'jalik xarajatlari</option>
+                                    <option value="4310">4310 - Mol yetkazib beruvchilarga bo'nak</option>
+                                    <option value="4710">4710 - Xodimlarga tovarlar uchun</option>
+                                    <option value="4720">4720 - Xodimlarga ssuda (qarz)</option>
+                                    <option value="4730">4730 - Kamomad moddiy javobgar shaxs</option>
+                                    <option value="5110">5110 - Bank hisobiga topshirilgan</option>
+                                    <option value="5530">5530 - Maxsus schyotga topshirilgan</option>
+                                    <option value="5710">5710 - Inkassatorga topshirilgan</option>
+                                    <option value="5810">5810 - Qisqa muddatli qimmatli qog'oz</option>
+                                    <option value="5910">5910 - Kassada naqd pul kamomadi</option>
+                                    <option value="6010">6010 - Mol yetkazib beruvchilarga qarz</option>
+                                    <option value="6020">6020 - Veksellar bo'yicha qarz</option>
+                                    <option value="6110">6110 - Bo'linmalar va qaram jamiyatlar qarzi</option>
+                                    <option value="6310">6310 - Xaridorlardan bo'nak qaytarish</option>
+                                    <option value="6410">6410 - Byudjet oldidagi qarz (soliq)</option>
+                                    <option value="6510">6510 - Sug'urta to'lovlari</option>
+                                    <option value="6610">6610 - Ta'sischilarga dividend</option>
+                                    <option value="6710">6710 - Mehnat haqi va mukofotlar</option>
+                                    <option value="6720">6720 - Deponentlangan mehnat haqi</option>
+                                    <option value="6810">6810 - Bankning qisqa muddatli krediti</option>
+                                    <option value="6920">6920 - Ijara to'lovlari</option>
+                                    <option value="6990">6990 - Nafaqalar va moddiy yordam</option>
+                                    <option value="8610">8610 - Xususiy aksiyalar uchun</option>
+                                    <option value="8810">8810 - Maqsadli mablag'lardan sarf</option>
                                 </select>
                             </div>
 
                             <div class="form-group full-width">
                                 <label class="form-label">Hujjat Asosi (Pasport va h.k)</label>
-                                <input type="text" id="expenseDocument" class="form-input" placeholder="Pasport AA 1234567...">
+                                <input type="text" id="expenseDocument" class="form-input"
+                                    placeholder="Pasport AA 1234567...">
                             </div>
 
                             <div class="form-group full-width">
@@ -302,7 +345,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2025 Naqd Pul Kirim Order Tizimi. Barcha huquqlar himoyalangan.</p>
+            <p>&copy; 2025 Kassa Tizimi. Barcha huquqlar himoyalangan.</p>
         </footer>
     </div>
 
@@ -310,106 +353,13 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Kirim Orderni Tahrirlash</h2>
+                <h2 class="modal-title">Orderni Tahrirlash</h2>
                 <button class="modal-close" id="closeModal">&times;</button>
             </div>
             <form id="editForm" class="receipt-form">
-                <input type="hidden" id="editId">
-
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <label for="editReceiptNumber" class="form-label">Qabul Raqami</label>
-                        <input type="text" id="editReceiptNumber" class="form-input" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editPayerName" class="form-label">To'lovchi F.I.O</label>
-                        <input type="text" id="editPayerName" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editPayerPhone" class="form-label">Telefon</label>
-                        <input type="tel" id="editPayerPhone" class="form-input">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editAmount" class="form-label">Summa (so'm)</label>
-                        <input type="number" id="editAmount" class="form-input" min="0" step="0.01" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editDate" class="form-label">Sana</label>
-                        <input type="date" id="editDate" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editDebitAccount" class="form-label">Debit Schyoti</label>
-                        <select id="editDebitAccount" class="form-input" required>
-                            <option value="">Tanlang</option>
-                            <option value="5010">5010 - Kassa (milliy valyuta)</option>
-                            <option value="5020">5020 - Kassa (xorijiy valyuta)</option>
-                            <option value="5110">5110 - Hisob-kitob schyoti (bank)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editCreditAccount" class="form-label">Kredit Schyoti</label>
-                        <select id="editCreditAccount" class="form-input" required>
-                            <option value="">Tanlang</option>
-                            <option value="4010">4010 - Xaridorlar va buyurtmachilar qarzi</option>
-                            <option value="4220">4220 - Hisobdot shaxslar bo'yicha bo'naklar</option>
-                            <option value="4230">4230 - (Hisobdot shaxslar bo'yicha bo'naklar)</option>
-                            <option value="4310">4310 - Yetkazib beruvchilarga berilgan bo'naklar</option>
-                            <option value="4720">4720 - Xodimlarga berilgan ssudalar</option>
-                            <option value="4730">4730 - Ayblor shaxslardan kannonmadlar</option>
-                            <option value="4890">4890 - Boshqa qarzdorlar (jisqa, kommunal va h.k.)</option>
-                            <option value="5110">5110 - Hisob-kitob schyoti (bank)</option>
-                            <option value="6010">6010 - Yetkazib beruvchilar qarzi</option>
-                            <option value="6310">6310 - Xaridorlardan olingan bo'naklar</option>
-                            <option value="6410">6410 - Byudjet bilan hisob-kitob</option>
-                            <option value="6710">6710 - Mehnat haqi to'lovi</option>
-                            <option value="6990">6990 - Boshqa to'lovlar (nafaqalar, moddiy yordam)</option>
-                            <option value="9010">9010 - Tayyor mahsulot sotish</option>
-                            <option value="9020">9020 - Tovarlar sotish</option>
-                            <option value="9030">9030 - Xizmatlar va ishlar</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="editPurpose" class="form-label">To'lov Maqsadi</label>
-                        <input type="text" id="editPurpose" class="form-input" required>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="editNotes" class="form-label">Izoh</label>
-                        <textarea id="editNotes" class="form-input form-textarea" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelEdit">Bekor qilish</button>
-                    <button type="submit" class="btn btn-primary">Saqlash</button>
-                </div>
+                <!-- Edit form content would go here via JS -->
+                <p class="empty-hint">Tahrirlash funksiyasi tez orada ishga tushadi.</p>
             </form>
-        </div>
-    </div>
-
-    <!-- Print Modal -->
-    <div id="printModal" class="modal">
-        <div class="modal-content print-modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Qabul Chop Etish</h2>
-                <button class="modal-close" id="closePrintModal">&times;</button>
-            </div>
-            <div id="printContent" class="print-content">
-                <!-- Print content will be generated here -->
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="cancelPrint">Bekor qilish</button>
-                <button type="button" class="btn btn-primary" id="printBtn">
-                    <span class="btn-icon">🖨️</span>
-                    Chop Etish
-                </button>
-            </div>
         </div>
     </div>
 
