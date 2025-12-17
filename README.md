@@ -1,4 +1,4 @@
-# Naqd Pul Kirim Order Tizimi
+# Kassa
 
 Professional kassaga naqd pul kirimini boshqarish va kuzatish uchun zamonaviy web ilova.
 
