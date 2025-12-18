@@ -386,8 +386,8 @@
 <body>
 
     <header class="no-print">
-        <h1>🏛️ Kassa Tizimi (5010)</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">O'quv amaliyoti uchun</p>
+        <h1>🏛️ Kassa Tizimi (5010) — "FAXR MADAD KONSALT"</h1>
+        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Muallif: Suxrat Abdullaev</p>
     </header>
 
     <div class="container no-print">
@@ -492,10 +492,21 @@
 
         <!-- VIEW: LEDGER (KASSA DAFTARI) -->
         <div id="view-ledger" class="card" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; mb-4">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h2 style="margin: 0; color: var(--primary-dark);">📚 Kassa Daftari (5010)</h2>
-                <button onclick="printLedger()" class="print-btn">🖨️ Kassa Daftarini Chop Etish</button>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="exportLedgerToExcel()" class="print-btn" style="background-color: #10b981;">📊
+                        Excel</button>
+                    <button onclick="printLedger()" class="print-btn">🖨️ Chop Etish</button>
+                </div>
             </div>
+
+            <div style="margin-bottom: 1rem;">
+                <input type="text" id="ledger-search" onkeyup="filterLedger()"
+                    placeholder="🔍 Qidiruv (Sana, Summa, Familiya...)"
+                    style="padding: 0.75rem; width: 100%; border: 2px solid var(--border-color); border-radius: 0.5rem;">
+            </div>
+
             <div style="overflow-x: auto;">
                 <table class="ledger-table">
                     <thead>
@@ -516,6 +527,13 @@
         </div>
 
     </div>
+
+    <footer class="no-print"
+        style="text-align: center; padding: 2rem; color: #64748b; font-size: 0.9rem; margin-top: auto;">
+        <div style="font-weight: bold;">"FAXR MADAD KONSALT"</div>
+        <div>Loyiha muallifi: Suxrat Abdullaev</div>
+        <div style="font-size: 0.8rem; margin-top: 5px;">&copy; 2025 Barcha huquqlar himoyalangan</div>
+    </footer>
 
     <!-- Print Overlay -->
     <div id="print-overlay" class="no-print">
@@ -712,6 +730,69 @@
             });
         }
 
+        // --- NEW FEATURES ---
+        function filterLedger() {
+            const input = document.getElementById('ledger-search');
+            const filter = input.value.toUpperCase();
+            const tr = document.getElementById('ledger-body').getElementsByTagName('tr');
+
+            for (let i = 0; i < tr.length; i++) {
+                const textContent = tr[i].textContent || tr[i].innerText;
+                if (textContent.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        function exportLedgerToExcel() {
+            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
+            // Sort chronologically
+            history.sort((a, b) => {
+                if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
+                return a.id - b.id;
+            });
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Sana,Hujjat,Mazmuni,Kirim (Debet),Chiqim (Kredit),Qoldiq\n";
+
+            let balance = 0;
+
+            history.forEach(item => {
+                let kirim = 0;
+                let chiqim = 0;
+                if (item.type === 'KO-1') {
+                    kirim = item.amount;
+                    balance += kirim;
+                } else {
+                    chiqim = item.amount;
+                    balance -= chiqim;
+                }
+
+                // Escape CSV fields
+                const safePerson = `"${(item.person + ' ' + item.basis).replace(/"/g, '""')}"`;
+                const docName = `${item.type} N${item.id.toString().slice(-4)}`;
+
+                const row = [
+                    item.date,
+                    docName,
+                    safePerson,
+                    kirim > 0 ? kirim.toFixed(2) : "",
+                    chiqim > 0 ? chiqim.toFixed(2) : "",
+                    balance.toFixed(2)
+                ].join(",");
+                csvContent += row + "\r\n";
+            });
+
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "kassa_daftari_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function openPrint(id) {
             const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
             const item = history.find(i => i.id === id);
@@ -723,6 +804,7 @@
             if (item.type === 'KO-1') {
                 printArea.innerHTML = `
                 <div class="ko-form">
+                    <div style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">"FAXR MADAD KONSALT"</div>
                     <div class="ko-header">KIRIM KASSA ORDERI № ${item.id.toString().slice(-4)}</div>
                     <div style="text-align:right; font-size: 0.9rem;">${item.date} yil</div>
                     
@@ -755,6 +837,7 @@
                 <div class="cut-line"></div>
 
                 <div class="ko-form">
+                    <div style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">"FAXR MADAD KONSALT"</div>
                     <div class="ko-header">KVITANSIYA (KO-1 № ${item.id.toString().slice(-4)} ga)</div>
                     <div style="text-align: center; margin-bottom: 10px;">${item.date} yil</div>
                     
@@ -775,6 +858,7 @@
             } else {
                 printArea.innerHTML = `
                <div class="ko-form">
+                    <div style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">"FAXR MADAD KONSALT"</div>
                     <div class="ko-header">CHIQIM KASSA ORDERI № ${item.id.toString().slice(-4)}</div>
                     <div style="text-align:right; font-size: 0.9rem;">${item.date} yil</div>
                     
