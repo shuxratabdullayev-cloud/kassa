@@ -438,8 +438,13 @@
                             <label>Summa (so'm)</label>
                             <input type="number" id="k-amount" placeholder="0.00" min="0.01" step="0.01" required>
                         </div>
-                        <button type="submit" class="submit-btn" style="background-color: #10b981;">Kirim Orderini
-                            Yaratish</button>
+                        <div style="display:flex; gap:10px;">
+                            <button type="submit" id="btn-kirim-submit" class="submit-btn"
+                                style="background-color: #10b981;">Kirim Orderini Yaratish</button>
+                            <button type="button" id="btn-kirim-cancel" class="submit-btn"
+                                style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
+                                qilish</button>
+                        </div>
                     </form>
 
                     <!-- Chiqim Form -->
@@ -473,8 +478,13 @@
                             <label>Summa (so'm)</label>
                             <input type="number" id="ch-amount" placeholder="0.00" min="0.01" step="0.01" required>
                         </div>
-                        <button type="submit" class="submit-btn" style="background-color: #f59e0b;">Chiqim Orderini
-                            Yaratish</button>
+                        <div style="display:flex; gap:10px;">
+                            <button type="submit" id="btn-chiqim-submit" class="submit-btn"
+                                style="background-color: #f59e0b;">Chiqim Orderini Yaratish</button>
+                            <button type="button" id="btn-chiqim-cancel" class="submit-btn"
+                                style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
+                                qilish</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -579,6 +589,8 @@
             renderAll();
         };
 
+        let editingId = null; // Track ID being edited
+
         // Navigation Logic
         function switchView(viewName) {
             if (viewName === 'forms') {
@@ -606,6 +618,8 @@
                 document.querySelectorAll('.card .tabs .tab-btn')[0].classList.remove('active');
                 document.querySelectorAll('.card .tabs .tab-btn')[1].classList.add('active');
             }
+            // Cancel any active edit when switching tabs to avoid confusion
+            cancelEdit();
         }
 
         // Handle Kirim Submit
@@ -613,7 +627,7 @@
             e.preventDefault();
             const data = {
                 type: 'KO-1',
-                id: Date.now(),
+                id: editingId || Date.now(), // Use existing ID if editing
                 date: document.getElementById('k-date').value,
                 debet: '5010',
                 kredit: document.getElementById('k-credit').value,
@@ -622,8 +636,7 @@
                 amount: parseFloat(document.getElementById('k-amount').value)
             };
             saveOrder(data);
-            this.reset();
-            document.getElementById('k-date').value = new Date().toISOString().split('T')[0];
+            cancelEdit();
         };
 
         // Handle Chiqim Submit
@@ -631,7 +644,7 @@
             e.preventDefault();
             const data = {
                 type: 'KO-2',
-                id: Date.now(),
+                id: editingId || Date.now(), // Use existing ID if editing
                 date: document.getElementById('ch-date').value,
                 debet: document.getElementById('ch-debet').value,
                 kredit: '5010',
@@ -640,15 +653,80 @@
                 amount: parseFloat(document.getElementById('ch-amount').value)
             };
             saveOrder(data);
-            this.reset();
-            document.getElementById('ch-date').value = new Date().toISOString().split('T')[0];
+            cancelEdit();
         };
 
         function saveOrder(order) {
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            history.push(order); // Append to end for chronological simplicity in Ledger (resort later if needed)
+            let history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
+
+            if (editingId) {
+                // Update existing
+                const index = history.findIndex(h => h.id === editingId);
+                if (index !== -1) {
+                    history[index] = order;
+                }
+            } else {
+                // Create new
+                history.push(order);
+            }
+
             localStorage.setItem('kassa_history', JSON.stringify(history));
             renderAll();
+        }
+
+        function editOrder(id) {
+            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
+            const order = history.find(h => h.id === id);
+            if (!order) return;
+
+            editingId = id;
+
+            if (order.type === 'KO-1') {
+                // Switch to Kirim tab
+                switchFormTab('kirim');
+
+                // Fill form
+                document.getElementById('k-date').value = order.date;
+                document.getElementById('k-credit').value = order.kredit;
+                document.getElementById('k-from').value = order.person;
+                document.getElementById('k-basis').value = order.basis;
+                document.getElementById('k-amount').value = order.amount;
+
+                // Change button state
+                document.getElementById('btn-kirim-submit').innerText = '💾 Saqlash';
+                document.getElementById('btn-kirim-cancel').style.display = 'block';
+
+            } else {
+                // Switch to Chiqim tab
+                switchFormTab('chiqim');
+
+                // Fill form
+                document.getElementById('ch-date').value = order.date;
+                document.getElementById('ch-debet').value = order.debet;
+                document.getElementById('ch-to').value = order.person;
+                document.getElementById('ch-basis').value = order.basis;
+                document.getElementById('ch-amount').value = order.amount;
+
+                // Change button state
+                document.getElementById('btn-chiqim-submit').innerText = '💾 Saqlash';
+                document.getElementById('btn-chiqim-cancel').style.display = 'block';
+            }
+        }
+
+        function cancelEdit() {
+            editingId = null;
+
+            // Reset Kirim
+            document.getElementById('kirim-form').reset();
+            document.getElementById('k-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('btn-kirim-submit').innerText = 'Kirim Orderini Yaratish';
+            document.getElementById('btn-kirim-cancel').style.display = 'none';
+
+            // Reset Chiqim
+            document.getElementById('chiqim-form').reset();
+            document.getElementById('ch-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('btn-chiqim-submit').innerText = 'Chiqim Orderini Yaratish';
+            document.getElementById('btn-chiqim-cancel').style.display = 'none';
         }
 
         function deleteOrder(id) {
@@ -684,9 +762,10 @@
                         ${item.type === 'KO-1' ? 'Debet: 5010' : 'Kredit: 5010'} - ${item.person}
                     </div>
                 </div>
-                <div style="display:flex; align-items:center;">
-                    <button class="print-btn" onclick="openPrint(${item.id})">🖨️</button>
-                    <button class="delete-btn" onclick="deleteOrder(${item.id})">🗑️</button>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <button class="print-btn" onclick="openPrint(${item.id})" title="Chop etish">🖨️</button>
+                    <button class="print-btn" onclick="editOrder(${item.id})" style="background-color:#f59e0b;" title="Tahrirlash">✏️</button>
+                    <button class="delete-btn" onclick="deleteOrder(${item.id})" title="O'chirish">🗑️</button>
                 </div>
             `;
                 list.appendChild(li);
