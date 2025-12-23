@@ -375,386 +375,530 @@
         }
 
         table.gl-table th,
+        table.gl-table th,
         table.gl-table td {
             border: 1px solid black;
             padding: 5px;
             text-align: center;
+        }
+
+        /* LOGIN MODAL & USER INFO */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .login-modal-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-modal-box h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .login-modal-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
+        }
+
+        .login-modal-box button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
 
-    <header class="no-print">
-        <h1>🏛️ Kassa Tizimi (5010) — "FAXR MADAD KONSALT"</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Muallif: Suxrat Abdullaev</p>
-    </header>
+    <body>
 
-    <div class="container no-print">
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchView('forms')">📝 Hujjatlar</button>
-            <button class="tab-btn" onclick="switchView('ledger')">📚 Kassa Daftari</button>
+        <!-- LOGIN MODAL -->
+        <div class="modal-overlay" id="login-modal">
+            <div class="login-modal-box">
+                <h2>🔐 Kassaga Kirish</h2>
+                <p style="margin-bottom: 1rem; color: #6b7280;">Talaba ma'lumotlarini kiriting:</p>
+                <input type="text" id="username-input" placeholder="F.I.Sh (Masalan: Aliyev Vali)" autofocus>
+                <input type="text" id="group-input" placeholder="Guruh (Masalan: 304-guruh)">
+                <button onclick="loginUser()">Boshlash</button>
+            </div>
         </div>
 
-        <!-- VIEW: FORMS & HISTORY -->
-        <div id="view-forms" class="main-layout">
-            <!-- Left Side: Forms -->
-            <div>
-                <div class="card">
-                    <div class="tabs" style="margin-bottom: 1rem;">
-                        <button class="tab-btn active" onclick="switchFormTab('kirim')">▼ Kirim (KO-1)</button>
-                        <button class="tab-btn" onclick="switchFormTab('chiqim')">▲ Chiqim (KO-2)</button>
+        <!-- USER DISPLAY -->
+        <div class="user-info no-print" id="user-display" style="cursor: default;">
+            <span id="current-user-info">...</span> <span style="cursor:pointer; margin-left:10px; color:red;"
+                onclick="logout()" title="Chiqish">❌</span>
+        </div>
+
+        <header class="no-print">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h1 style="margin:0;">🏛️ Kassa Tizimi (5010) — "FAXR MADAD KONSALT"</h1>
+                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Muallif: Suxrat Abdullaev</p>
+                </div>
+                <button onclick="openQuiz()" class="btn"
+                    style="background:#8b5cf6; color:white; border:none; box-shadow:0 4px 15px rgba(139, 92, 246, 0.4); display:flex; align-items:center; gap:5px; font-size:1rem; padding: 10px 20px;">
+                    🧠 Bilimni Sinash
+                </button>
+            </div>
+        </header>
+
+        <div class="container no-print">
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchView('forms')">📝 Hujjatlar</button>
+                <button class="tab-btn" onclick="switchView('ledger')">📚 Kassa Daftari</button>
+            </div>
+
+            <!-- VIEW: FORMS & HISTORY -->
+            <div id="view-forms" class="main-layout">
+                <!-- Left Side: Forms -->
+                <div>
+                    <div class="card">
+                        <div class="tabs" style="margin-bottom: 1rem;">
+                            <button class="tab-btn active" onclick="switchFormTab('kirim')">▼ Kirim (KO-1)</button>
+                            <button class="tab-btn" onclick="switchFormTab('chiqim')">▲ Chiqim (KO-2)</button>
+                        </div>
+
+                        <!-- Kirim Form -->
+                        <form id="kirim-form">
+                            <div class="form-group">
+                                <label>Sana</label>
+                                <input type="date" id="k-date" required>
+                            </div>
+                            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label>Debet (Kassa)</label>
+                                    <input type="text" value="5010" class="readonly-field" readonly>
+                                </div>
+                                <div>
+                                    <label>Kredit (Manba)</label>
+                                    <select id="k-credit" required>
+                                        <option value="">Tanlang...</option>
+                                        <!-- List filled by JS -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Kimdan qabul qilindi</label>
+                                <input type="text" id="k-from" placeholder="F.I.SH" required>
+                            </div>
+                            <div class="form-group">
+                                <label>To'lov maqsadi (Asos)</label>
+                                <input type="text" id="k-basis" placeholder="Masalan: Savdo tushumi" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Summa (so'm)</label>
+                                <input type="number" id="k-amount" placeholder="0.00" min="0.01" step="0.01" required>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button type="submit" id="btn-kirim-submit" class="submit-btn"
+                                    style="background-color: #10b981;">Kirim Orderini Yaratish</button>
+                                <button type="button" id="btn-kirim-cancel" class="submit-btn"
+                                    style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
+                                    qilish</button>
+                            </div>
+                        </form>
+
+                        <!-- Chiqim Form -->
+                        <form id="chiqim-form" style="display: none;">
+                            <div class="form-group">
+                                <label>Sana</label>
+                                <input type="date" id="ch-date" required>
+                            </div>
+                            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label>Debet (Qayerga)</label>
+                                    <select id="ch-debet" required>
+                                        <option value="">Tanlang...</option>
+                                        <!-- List filled by JS -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Kredit (Kassa)</label>
+                                    <input type="text" value="5010" class="readonly-field" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Kimga berildi</label>
+                                <input type="text" id="ch-to" placeholder="F.I.SH" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Asos (Maqsad)</label>
+                                <input type="text" id="ch-basis" placeholder="Masalan: Ish haqi uchun" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Summa (so'm)</label>
+                                <input type="number" id="ch-amount" placeholder="0.00" min="0.01" step="0.01" required>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button type="submit" id="btn-chiqim-submit" class="submit-btn"
+                                    style="background-color: #f59e0b;">Chiqim Orderini Yaratish</button>
+                                <button type="button" id="btn-chiqim-cancel" class="submit-btn"
+                                    style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
+                                    qilish</button>
+                            </div>
+                        </form>
                     </div>
+                </div>
 
-                    <!-- Kirim Form -->
-                    <form id="kirim-form">
-                        <div class="form-group">
-                            <label>Sana</label>
-                            <input type="date" id="k-date" required>
-                        </div>
-                        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div>
-                                <label>Debet (Kassa)</label>
-                                <input type="text" value="5010" class="readonly-field" readonly>
-                            </div>
-                            <div>
-                                <label>Kredit (Manba)</label>
-                                <select id="k-credit" required>
-                                    <option value="">Tanlang...</option>
-                                    <!-- List filled by JS -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Kimdan qabul qilindi</label>
-                            <input type="text" id="k-from" placeholder="F.I.SH" required>
-                        </div>
-                        <div class="form-group">
-                            <label>To'lov maqsadi (Asos)</label>
-                            <input type="text" id="k-basis" placeholder="Masalan: Savdo tushumi" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Summa (so'm)</label>
-                            <input type="number" id="k-amount" placeholder="0.00" min="0.01" step="0.01" required>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <button type="submit" id="btn-kirim-submit" class="submit-btn"
-                                style="background-color: #10b981;">Kirim Orderini Yaratish</button>
-                            <button type="button" id="btn-kirim-cancel" class="submit-btn"
-                                style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
-                                qilish</button>
-                        </div>
-                    </form>
-
-                    <!-- Chiqim Form -->
-                    <form id="chiqim-form" style="display: none;">
-                        <div class="form-group">
-                            <label>Sana</label>
-                            <input type="date" id="ch-date" required>
-                        </div>
-                        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div>
-                                <label>Debet (Qayerga)</label>
-                                <select id="ch-debet" required>
-                                    <option value="">Tanlang...</option>
-                                    <!-- List filled by JS -->
-                                </select>
-                            </div>
-                            <div>
-                                <label>Kredit (Kassa)</label>
-                                <input type="text" value="5010" class="readonly-field" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Kimga berildi</label>
-                            <input type="text" id="ch-to" placeholder="F.I.SH" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Asos (Maqsad)</label>
-                            <input type="text" id="ch-basis" placeholder="Masalan: Ish haqi uchun" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Summa (so'm)</label>
-                            <input type="number" id="ch-amount" placeholder="0.00" min="0.01" step="0.01" required>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <button type="submit" id="btn-chiqim-submit" class="submit-btn"
-                                style="background-color: #f59e0b;">Chiqim Orderini Yaratish</button>
-                            <button type="button" id="btn-chiqim-cancel" class="submit-btn"
-                                style="background-color: #6b7280; display:none;" onclick="cancelEdit()">Bekor
-                                qilish</button>
-                        </div>
-                    </form>
+                <!-- Right Side: Recent Docs -->
+                <div>
+                    <div class="card">
+                        <h2 style="margin-top: 0; color: var(--primary-dark);">📂 Hujjatlar Tarixi</h2>
+                        <ul id="history-list" class="history-list">
+                            <!-- Items will be here -->
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <!-- Right Side: Recent Docs -->
-            <div>
-                <div class="card">
-                    <h2 style="margin-top: 0; color: var(--primary-dark);">📂 Hujjatlar Tarixi</h2>
-                    <ul id="history-list" class="history-list">
-                        <!-- Items will be here -->
-                    </ul>
+            <!-- VIEW: LEDGER (KASSA DAFTARI) -->
+            <div id="view-ledger" class="card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="margin: 0; color: var(--primary-dark);">📚 Kassa Daftari (5010)</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="exportLedgerToExcel()" class="print-btn" style="background-color: #10b981;">📊
+                            Excel</button>
+                        <button onclick="printLedger()" class="print-btn">🖨️ Chop Etish</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" id="ledger-search" onkeyup="filterLedger()"
+                        placeholder="🔍 Qidiruv (Sana, Summa, Familiya...)"
+                        style="padding: 0.75rem; width: 100%; border: 2px solid var(--border-color); border-radius: 0.5rem;">
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Sana</th>
+                                <th>Hujjat</th>
+                                <th>Mazmuni</th>
+                                <th class="amount-col">Kirim (Debet)</th>
+                                <th class="amount-col">Chiqim (Kredit)</th>
+                                <th class="amount-col">Qoldiq</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body">
+                            <!-- Ledger rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="no-print"
+            style="text-align: center; padding: 2rem; color: #64748b; font-size: 0.9rem; margin-top: auto;">
+            <div style="font-weight: bold;">"FAXR MADAD KONSALT"</div>
+            <div>Loyiha muallifi: Suxrat Abdullaev</div>
+            <div style="font-size: 0.8rem; margin-top: 5px;">&copy; 2025 Barcha huquqlar himoyalangan</div>
+        </footer>
+
+        <!-- Print Overlay -->
+        <div id="print-overlay" class="no-print">
+            <div id="print-area-wrapper">
+                <div style="text-align: right; margin-bottom: 1rem;">
+                    <button onclick="window.print()" class="print-btn" style="display: inline-block;">🖨️ Chop
+                        etish</button>
+                    <button onclick="closePrint()" class="delete-btn" style="background-color: #6b7280;">Yopish</button>
+                </div>
+                <div id="print-area">
+                    <!-- Content injected here for print -->
                 </div>
             </div>
         </div>
 
-        <!-- VIEW: LEDGER (KASSA DAFTARI) -->
-        <div id="view-ledger" class="card" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h2 style="margin: 0; color: var(--primary-dark);">📚 Kassa Daftari (5010)</h2>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="exportLedgerToExcel()" class="print-btn" style="background-color: #10b981;">📊
-                        Excel</button>
-                    <button onclick="printLedger()" class="print-btn">🖨️ Chop Etish</button>
-                </div>
-            </div>
+        <script>
+            // Configuration
+            const accounts = [
+                '4010', '4210', '4220', '4290', '4310', '4610',
+                '4720', '4730', '5110', '5710', '5910', '6010',
+                '6710', '6310', '9010', '9020', '9030', '9390', '9380'
+            ];
 
-            <div style="margin-bottom: 1rem;">
-                <input type="text" id="ledger-search" onkeyup="filterLedger()"
-                    placeholder="🔍 Qidiruv (Sana, Summa, Familiya...)"
-                    style="padding: 0.75rem; width: 100%; border: 2px solid var(--border-color); border-radius: 0.5rem;">
-            </div>
+            // Initialize
+            // Initialize
+            window.onload = function () {
+                // Fill Select Options
+                const kCreditSelect = document.getElementById('k-credit');
+                const chDebetSelect = document.getElementById('ch-debet');
 
-            <div style="overflow-x: auto;">
-                <table class="ledger-table">
-                    <thead>
-                        <tr>
-                            <th>Sana</th>
-                            <th>Hujjat</th>
-                            <th>Mazmuni</th>
-                            <th class="amount-col">Kirim (Debet)</th>
-                            <th class="amount-col">Chiqim (Kredit)</th>
-                            <th class="amount-col">Qoldiq</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ledger-body">
-                        <!-- Ledger rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                accounts.forEach(acc => {
+                    const opt1 = new Option(acc, acc);
+                    const opt2 = new Option(acc, acc);
+                    kCreditSelect.add(opt1);
+                    chDebetSelect.add(opt2);
+                });
 
-    </div>
+                // Set Today's Date
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('k-date').value = today;
+                document.getElementById('ch-date').value = today;
 
-    <footer class="no-print"
-        style="text-align: center; padding: 2rem; color: #64748b; font-size: 0.9rem; margin-top: auto;">
-        <div style="font-weight: bold;">"FAXR MADAD KONSALT"</div>
-        <div>Loyiha muallifi: Suxrat Abdullaev</div>
-        <div style="font-size: 0.8rem; margin-top: 5px;">&copy; 2025 Barcha huquqlar himoyalangan</div>
-    </footer>
-
-    <!-- Print Overlay -->
-    <div id="print-overlay" class="no-print">
-        <div id="print-area-wrapper">
-            <div style="text-align: right; margin-bottom: 1rem;">
-                <button onclick="window.print()" class="print-btn" style="display: inline-block;">🖨️ Chop
-                    etish</button>
-                <button onclick="closePrint()" class="delete-btn" style="background-color: #6b7280;">Yopish</button>
-            </div>
-            <div id="print-area">
-                <!-- Content injected here for print -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Configuration
-        const accounts = [
-            '4010', '4210', '4220', '4290', '4310', '4610',
-            '4720', '4730', '5110', '5710', '5910', '6010',
-            '6710', '6310', '9010', '9020', '9030', '9390', '9380'
-        ];
-
-        // Initialize
-        window.onload = function () {
-            // Fill Select Options
-            const kCreditSelect = document.getElementById('k-credit');
-            const chDebetSelect = document.getElementById('ch-debet');
-
-            accounts.forEach(acc => {
-                const opt1 = new Option(acc, acc);
-                const opt2 = new Option(acc, acc);
-                kCreditSelect.add(opt1);
-                chDebetSelect.add(opt2);
-            });
-
-            // Set Today's Date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('k-date').value = today;
-            document.getElementById('ch-date').value = today;
-
-            // Load History & Ledger
-            renderAll();
-        };
-
-        let editingId = null; // Track ID being edited
-
-        // Navigation Logic
-        function switchView(viewName) {
-            if (viewName === 'forms') {
-                document.getElementById('view-forms').style.display = 'grid';
-                document.getElementById('view-ledger').style.display = 'none';
-                document.querySelectorAll('.container > .tabs > .tab-btn')[0].classList.add('active');
-                document.querySelectorAll('.container > .tabs > .tab-btn')[1].classList.remove('active');
-            } else {
-                document.getElementById('view-forms').style.display = 'none';
-                document.getElementById('view-ledger').style.display = 'block';
-                document.querySelectorAll('.container > .tabs > .tab-btn')[0].classList.remove('active');
-                document.querySelectorAll('.container > .tabs > .tab-btn')[1].classList.add('active');
-            }
-        }
-
-        function switchFormTab(tab) {
-            if (tab === 'kirim') {
-                document.getElementById('kirim-form').style.display = 'block';
-                document.getElementById('chiqim-form').style.display = 'none';
-                document.querySelectorAll('.card .tabs .tab-btn')[0].classList.add('active');
-                document.querySelectorAll('.card .tabs .tab-btn')[1].classList.remove('active');
-            } else {
-                document.getElementById('kirim-form').style.display = 'none';
-                document.getElementById('chiqim-form').style.display = 'block';
-                document.querySelectorAll('.card .tabs .tab-btn')[0].classList.remove('active');
-                document.querySelectorAll('.card .tabs .tab-btn')[1].classList.add('active');
-            }
-            // Cancel any active edit when switching tabs to avoid confusion
-            cancelEdit();
-        }
-
-        // Handle Kirim Submit
-        document.getElementById('kirim-form').onsubmit = function (e) {
-            e.preventDefault();
-            const data = {
-                type: 'KO-1',
-                id: editingId || Date.now(), // Use existing ID if editing
-                date: document.getElementById('k-date').value,
-                debet: '5010',
-                kredit: document.getElementById('k-credit').value,
-                person: document.getElementById('k-from').value,
-                basis: document.getElementById('k-basis').value,
-                amount: parseFloat(document.getElementById('k-amount').value)
+                // CHECK LOGIN
+                checkLogin();
             };
-            saveOrder(data);
-            cancelEdit();
-        };
 
-        // Handle Chiqim Submit
-        document.getElementById('chiqim-form').onsubmit = function (e) {
-            e.preventDefault();
-            const data = {
-                type: 'KO-2',
-                id: editingId || Date.now(), // Use existing ID if editing
-                date: document.getElementById('ch-date').value,
-                debet: document.getElementById('ch-debet').value,
-                kredit: '5010',
-                person: document.getElementById('ch-to').value,
-                basis: document.getElementById('ch-basis').value,
-                amount: parseFloat(document.getElementById('ch-amount').value)
-            };
-            saveOrder(data);
-            cancelEdit();
-        };
+            let editingId = null; // Track ID being edited
+            let currentUser = null;
 
-        function saveOrder(order) {
-            let history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-
-            if (editingId) {
-                // Update existing
-                const index = history.findIndex(h => h.id === editingId);
-                if (index !== -1) {
-                    history[index] = order;
+            // --- LOGIN SYSTEM ---
+            function checkLogin() {
+                const storedUser = sessionStorage.getItem('kassa_user');
+                const storedGroup = sessionStorage.getItem('kassa_group');
+                if (storedUser && storedGroup) {
+                    currentUser = storedUser;
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('user-display').style.display = 'block';
+                    updateDisplay(storedUser, storedGroup);
+                    renderAll();
+                } else {
+                    document.getElementById('login-modal').style.display = 'flex';
                 }
-            } else {
-                // Create new
-                history.push(order);
             }
 
-            localStorage.setItem('kassa_history', JSON.stringify(history));
-            renderAll();
-        }
+            function loginUser() {
+                const name = document.getElementById('username-input').value.trim();
+                const group = document.getElementById('group-input').value.trim();
 
-        function editOrder(id) {
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            const order = history.find(h => h.id === id);
-            if (!order) return;
-
-            editingId = id;
-
-            if (order.type === 'KO-1') {
-                // Switch to Kirim tab
-                switchFormTab('kirim');
-
-                // Fill form
-                document.getElementById('k-date').value = order.date;
-                document.getElementById('k-credit').value = order.kredit;
-                document.getElementById('k-from').value = order.person;
-                document.getElementById('k-basis').value = order.basis;
-                document.getElementById('k-amount').value = order.amount;
-
-                // Change button state
-                document.getElementById('btn-kirim-submit').innerText = '💾 Saqlash';
-                document.getElementById('btn-kirim-cancel').style.display = 'block';
-
-            } else {
-                // Switch to Chiqim tab
-                switchFormTab('chiqim');
-
-                // Fill form
-                document.getElementById('ch-date').value = order.date;
-                document.getElementById('ch-debet').value = order.debet;
-                document.getElementById('ch-to').value = order.person;
-                document.getElementById('ch-basis').value = order.basis;
-                document.getElementById('ch-amount').value = order.amount;
-
-                // Change button state
-                document.getElementById('btn-chiqim-submit').innerText = '💾 Saqlash';
-                document.getElementById('btn-chiqim-cancel').style.display = 'block';
+                if (name && group) {
+                    currentUser = name;
+                    sessionStorage.setItem('kassa_user', name);
+                    sessionStorage.setItem('kassa_group', group);
+                    document.getElementById('login-modal').style.display = 'none';
+                    document.getElementById('user-display').style.display = 'block';
+                    updateDisplay(name, group);
+                    renderAll();
+                } else {
+                    alert("Iltimos, F.I.Sh va Guruhni kiriting!");
+                }
             }
-        }
 
-        function cancelEdit() {
-            editingId = null;
+            function updateDisplay(name, group) {
+                document.getElementById('current-user-info').innerHTML = `Talaba: <b>${name}</b> | Guruh: <b>${group}</b>`;
+            }
 
-            // Reset Kirim
-            document.getElementById('kirim-form').reset();
-            document.getElementById('k-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('btn-kirim-submit').innerText = 'Kirim Orderini Yaratish';
-            document.getElementById('btn-kirim-cancel').style.display = 'none';
+            function logout() {
+                if (confirm("Tizimdan chiqmoqchimisiz?")) {
+                    sessionStorage.removeItem('kassa_user');
+                    sessionStorage.removeItem('kassa_group');
+                    location.reload();
+                }
+            }
 
-            // Reset Chiqim
-            document.getElementById('chiqim-form').reset();
-            document.getElementById('ch-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('btn-chiqim-submit').innerText = 'Chiqim Orderini Yaratish';
-            document.getElementById('btn-chiqim-cancel').style.display = 'none';
-        }
+            // Navigation Logic
+            function switchView(viewName) {
+                if (viewName === 'forms') {
+                    document.getElementById('view-forms').style.display = 'grid';
+                    document.getElementById('view-ledger').style.display = 'none';
+                    document.querySelectorAll('.container > .tabs > .tab-btn')[0].classList.add('active');
+                    document.querySelectorAll('.container > .tabs > .tab-btn')[1].classList.remove('active');
+                } else {
+                    document.getElementById('view-forms').style.display = 'none';
+                    document.getElementById('view-ledger').style.display = 'block';
+                    document.querySelectorAll('.container > .tabs > .tab-btn')[0].classList.remove('active');
+                    document.querySelectorAll('.container > .tabs > .tab-btn')[1].classList.add('active');
+                }
+            }
 
-        function deleteOrder(id) {
-            if (!confirm("Haqiqatan ham o'chirmoqchimisiz?")) return;
-            let history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            history = history.filter(item => item.id !== id);
-            localStorage.setItem('kassa_history', JSON.stringify(history));
-            renderAll();
-        }
+            function switchFormTab(tab) {
+                if (tab === 'kirim') {
+                    document.getElementById('kirim-form').style.display = 'block';
+                    document.getElementById('chiqim-form').style.display = 'none';
+                    document.querySelectorAll('.card .tabs .tab-btn')[0].classList.add('active');
+                    document.querySelectorAll('.card .tabs .tab-btn')[1].classList.remove('active');
+                } else {
+                    document.getElementById('kirim-form').style.display = 'none';
+                    document.getElementById('chiqim-form').style.display = 'block';
+                    document.querySelectorAll('.card .tabs .tab-btn')[0].classList.remove('active');
+                    document.querySelectorAll('.card .tabs .tab-btn')[1].classList.add('active');
+                }
+                // Cancel any active edit when switching tabs to avoid confusion
+                cancelEdit();
+            }
 
-        function renderAll() {
-            renderHistory();
-            renderLedger();
-        }
+            // Handle Kirim Submit
+            document.getElementById('kirim-form').onsubmit = function (e) {
+                e.preventDefault();
+                const data = {
+                    type: 'KO-1',
+                    id: editingId || Date.now(), // Use existing ID if editing
+                    date: document.getElementById('k-date').value,
+                    debet: '5010',
+                    kredit: document.getElementById('k-credit').value,
+                    person: document.getElementById('k-from').value,
+                    basis: document.getElementById('k-basis').value,
+                    amount: parseFloat(document.getElementById('k-amount').value)
+                };
+                saveOrder(data);
+                cancelEdit();
+            };
 
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            // Sort by Newest First for history view
-            const sortedHistory = [...history].sort((a, b) => b.id - a.id);
+            // Handle Chiqim Submit
+            document.getElementById('chiqim-form').onsubmit = function (e) {
+                e.preventDefault();
+                const data = {
+                    type: 'KO-2',
+                    id: editingId || Date.now(), // Use existing ID if editing
+                    date: document.getElementById('ch-date').value,
+                    debet: document.getElementById('ch-debet').value,
+                    kredit: '5010',
+                    person: document.getElementById('ch-to').value,
+                    basis: document.getElementById('ch-basis').value,
+                    amount: parseFloat(document.getElementById('ch-amount').value)
+                };
+                saveOrder(data);
+                cancelEdit();
+            };
 
-            list.innerHTML = '';
+            function saveOrder(order) {
+                if (!currentUser) return;
+                let history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
 
-            sortedHistory.forEach(item => {
-                const formattedAmt = item.amount.toLocaleString('uz-UZ', { minimumFractionDigits: 2 });
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                li.innerHTML = `
+                if (editingId) {
+                    // Update existing
+                    const index = history.findIndex(h => h.id === editingId);
+                    if (index !== -1) {
+                        history[index] = order;
+                    }
+                } else {
+                    // Create new
+                    history.push(order);
+                }
+
+                localStorage.setItem('kassa_history_' + currentUser, JSON.stringify(history));
+                renderAll();
+            }
+
+            function editOrder(id) {
+                if (!currentUser) return;
+                const history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
+                const order = history.find(h => h.id === id);
+                if (!order) return;
+
+                editingId = id;
+
+                if (order.type === 'KO-1') {
+                    // Switch to Kirim tab
+                    switchFormTab('kirim');
+
+                    // Fill form
+                    document.getElementById('k-date').value = order.date;
+                    document.getElementById('k-credit').value = order.kredit;
+                    document.getElementById('k-from').value = order.person;
+                    document.getElementById('k-basis').value = order.basis;
+                    document.getElementById('k-amount').value = order.amount;
+
+                    // Change button state
+                    document.getElementById('btn-kirim-submit').innerText = '💾 Saqlash';
+                    document.getElementById('btn-kirim-cancel').style.display = 'block';
+
+                } else {
+                    // Switch to Chiqim tab
+                    switchFormTab('chiqim');
+
+                    // Fill form
+                    document.getElementById('ch-date').value = order.date;
+                    document.getElementById('ch-debet').value = order.debet;
+                    document.getElementById('ch-to').value = order.person;
+                    document.getElementById('ch-basis').value = order.basis;
+                    document.getElementById('ch-amount').value = order.amount;
+
+                    // Change button state
+                    document.getElementById('btn-chiqim-submit').innerText = '💾 Saqlash';
+                    document.getElementById('btn-chiqim-cancel').style.display = 'block';
+                }
+            }
+
+            function cancelEdit() {
+                editingId = null;
+
+                // Reset Kirim
+                document.getElementById('kirim-form').reset();
+                document.getElementById('k-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('btn-kirim-submit').innerText = 'Kirim Orderini Yaratish';
+                document.getElementById('btn-kirim-cancel').style.display = 'none';
+
+                // Reset Chiqim
+                document.getElementById('chiqim-form').reset();
+                document.getElementById('ch-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('btn-chiqim-submit').innerText = 'Chiqim Orderini Yaratish';
+                document.getElementById('btn-chiqim-cancel').style.display = 'none';
+            }
+
+            function deleteOrder(id) {
+                if (!currentUser) return;
+                if (!confirm("Haqiqatan ham o'chirmoqchimisiz?")) return;
+                let history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
+                history = history.filter(item => item.id !== id);
+                localStorage.setItem('kassa_history_' + currentUser, JSON.stringify(history));
+                renderAll();
+            }
+
+            function renderAll() {
+                renderHistory();
+                renderLedger();
+            }
+
+            function renderHistory() {
+                const list = document.getElementById('history-list');
+                if (!currentUser) { list.innerHTML = ''; return; }
+                const history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
+                // Sort by Newest First for history view
+                const sortedHistory = [...history].sort((a, b) => b.id - a.id);
+
+                list.innerHTML = '';
+
+                sortedHistory.forEach(item => {
+                    const formattedAmt = item.amount.toLocaleString('uz-UZ', { minimumFractionDigits: 2 });
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    li.innerHTML = `
                 <div class="history-info">
                     <strong>${item.type} № ${item.id.toString().slice(-4)}</strong>
                     <div class="history-meta">
@@ -768,36 +912,37 @@
                     <button class="delete-btn" onclick="deleteOrder(${item.id})" title="O'chirish">🗑️</button>
                 </div>
             `;
-                list.appendChild(li);
-            });
-        }
+                    list.appendChild(li);
+                });
+            }
 
-        function renderLedger() {
-            const tbody = document.getElementById('ledger-body');
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            // Sort chronologically (Oldest first) for correct balance calculation
-            history.sort((a, b) => {
-                if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
-                return a.id - b.id;
-            });
+            function renderLedger() {
+                const tbody = document.getElementById('ledger-body');
+                if (!currentUser) { tbody.innerHTML = ''; return; }
+                const history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
+                // Sort chronologically (Oldest first) for correct balance calculation
+                history.sort((a, b) => {
+                    if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
+                    return a.id - b.id;
+                });
 
-            tbody.innerHTML = '';
-            let balance = 0;
+                tbody.innerHTML = '';
+                let balance = 0;
 
-            history.forEach(item => {
-                let kirim = 0;
-                let chiqim = 0;
+                history.forEach(item => {
+                    let kirim = 0;
+                    let chiqim = 0;
 
-                if (item.type === 'KO-1') {
-                    kirim = item.amount;
-                    balance += kirim;
-                } else {
-                    chiqim = item.amount;
-                    balance -= chiqim;
-                }
+                    if (item.type === 'KO-1') {
+                        kirim = item.amount;
+                        balance += kirim;
+                    } else {
+                        chiqim = item.amount;
+                        balance -= chiqim;
+                    }
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
                 <td>${item.date}</td>
                 <td>${item.type} №${item.id.toString().slice(-4)}</td>
                 <td>${item.person}<br><small style="color:#666">${item.basis}</small></td>
@@ -805,83 +950,84 @@
                 <td class="amount-col" style="color: orange;">${chiqim > 0 ? chiqim.toLocaleString('uz-UZ', { minimumFractionDigits: 2 }) : '-'}</td>
                 <td class="amount-col" style="font-weight: bold;">${balance.toLocaleString('uz-UZ', { minimumFractionDigits: 2 })}</td>
             `;
-                tbody.appendChild(tr);
-            });
-        }
+                    tbody.appendChild(tr);
+                });
+            }
 
-        // --- NEW FEATURES ---
-        function filterLedger() {
-            const input = document.getElementById('ledger-search');
-            const filter = input.value.toUpperCase();
-            const tr = document.getElementById('ledger-body').getElementsByTagName('tr');
+            // --- NEW FEATURES ---
+            function filterLedger() {
+                const input = document.getElementById('ledger-search');
+                const filter = input.value.toUpperCase();
+                const tr = document.getElementById('ledger-body').getElementsByTagName('tr');
 
-            for (let i = 0; i < tr.length; i++) {
-                const textContent = tr[i].textContent || tr[i].innerText;
-                if (textContent.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+                for (let i = 0; i < tr.length; i++) {
+                    const textContent = tr[i].textContent || tr[i].innerText;
+                    if (textContent.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
-        }
 
-        function exportLedgerToExcel() {
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            // Sort chronologically
-            history.sort((a, b) => {
-                if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
-                return a.id - b.id;
-            });
+            function exportLedgerToExcel() {
+                if (!currentUser) return;
+                const history = JSON.parse(localStorage.getItem('kassa_history_' + currentUser) || '[]');
+                // Sort chronologically
+                history.sort((a, b) => {
+                    if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
+                    return a.id - b.id;
+                });
 
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "Sana,Hujjat,Mazmuni,Kirim (Debet),Chiqim (Kredit),Qoldiq\n";
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+                csvContent += "Sana,Hujjat,Mazmuni,Kirim (Debet),Chiqim (Kredit),Qoldiq\n";
 
-            let balance = 0;
+                let balance = 0;
 
-            history.forEach(item => {
-                let kirim = 0;
-                let chiqim = 0;
+                history.forEach(item => {
+                    let kirim = 0;
+                    let chiqim = 0;
+                    if (item.type === 'KO-1') {
+                        kirim = item.amount;
+                        balance += kirim;
+                    } else {
+                        chiqim = item.amount;
+                        balance -= chiqim;
+                    }
+
+                    // Escape CSV fields
+                    const safePerson = `"${(item.person + ' ' + item.basis).replace(/"/g, '""')}"`;
+                    const docName = `${item.type} N${item.id.toString().slice(-4)}`;
+
+                    const row = [
+                        item.date,
+                        docName,
+                        safePerson,
+                        kirim > 0 ? kirim.toFixed(2) : "",
+                        chiqim > 0 ? chiqim.toFixed(2) : "",
+                        balance.toFixed(2)
+                    ].join(",");
+                    csvContent += row + "\r\n";
+                });
+
+                const link = document.createElement("a");
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", "kassa_daftari_" + new Date().toISOString().slice(0, 10) + ".csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            function openPrint(id) {
+                const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
+                const item = history.find(i => i.id === id);
+                if (!item) return;
+
+                const printArea = document.getElementById('print-area');
+                const formattedAmt = item.amount.toLocaleString('uz-UZ', { minimumFractionDigits: 2 });
+
                 if (item.type === 'KO-1') {
-                    kirim = item.amount;
-                    balance += kirim;
-                } else {
-                    chiqim = item.amount;
-                    balance -= chiqim;
-                }
-
-                // Escape CSV fields
-                const safePerson = `"${(item.person + ' ' + item.basis).replace(/"/g, '""')}"`;
-                const docName = `${item.type} N${item.id.toString().slice(-4)}`;
-
-                const row = [
-                    item.date,
-                    docName,
-                    safePerson,
-                    kirim > 0 ? kirim.toFixed(2) : "",
-                    chiqim > 0 ? chiqim.toFixed(2) : "",
-                    balance.toFixed(2)
-                ].join(",");
-                csvContent += row + "\r\n";
-            });
-
-            const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", "kassa_daftari_" + new Date().toISOString().slice(0, 10) + ".csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function openPrint(id) {
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            const item = history.find(i => i.id === id);
-            if (!item) return;
-
-            const printArea = document.getElementById('print-area');
-            const formattedAmt = item.amount.toLocaleString('uz-UZ', { minimumFractionDigits: 2 });
-
-            if (item.type === 'KO-1') {
-                printArea.innerHTML = `
+                    printArea.innerHTML = `
                 <div class="ko-form">
                     <div style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">"FAXR MADAD KONSALT"</div>
                     <div class="ko-header">KIRIM KASSA ORDERI № ${item.id.toString().slice(-4)}</div>
@@ -934,8 +1080,8 @@
                     </div>
                 </div>
             `;
-            } else {
-                printArea.innerHTML = `
+                } else {
+                    printArea.innerHTML = `
                <div class="ko-form">
                     <div style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:5px;">"FAXR MADAD KONSALT"</div>
                     <div class="ko-header">CHIQIM KASSA ORDERI № ${item.id.toString().slice(-4)}</div>
@@ -973,37 +1119,37 @@
                     </div>
                 </div>
             `;
-            }
-
-            document.getElementById('print-overlay').style.display = 'flex';
-        }
-
-        function printLedger() {
-            const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
-            history.sort((a, b) => {
-                if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
-                return a.id - b.id;
-            });
-
-            let rows = '';
-            let balance = 0;
-            let totalIn = 0;
-            let totalOut = 0;
-
-            history.forEach(item => {
-                let kirim = 0;
-                let chiqim = 0;
-                if (item.type === 'KO-1') {
-                    kirim = item.amount;
-                    totalIn += kirim;
-                    balance += kirim;
-                } else {
-                    chiqim = item.amount;
-                    totalOut += chiqim;
-                    balance -= chiqim;
                 }
 
-                rows += `
+                document.getElementById('print-overlay').style.display = 'flex';
+            }
+
+            function printLedger() {
+                const history = JSON.parse(localStorage.getItem('kassa_history') || '[]');
+                history.sort((a, b) => {
+                    if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
+                    return a.id - b.id;
+                });
+
+                let rows = '';
+                let balance = 0;
+                let totalIn = 0;
+                let totalOut = 0;
+
+                history.forEach(item => {
+                    let kirim = 0;
+                    let chiqim = 0;
+                    if (item.type === 'KO-1') {
+                        kirim = item.amount;
+                        totalIn += kirim;
+                        balance += kirim;
+                    } else {
+                        chiqim = item.amount;
+                        totalOut += chiqim;
+                        balance -= chiqim;
+                    }
+
+                    rows += `
                 <tr>
                     <td>${item.date}</td>
                     <td>${item.type} №${item.id.toString().slice(-4)}</td>
@@ -1013,10 +1159,10 @@
                     <td align="right"><b>${balance.toLocaleString('uz-UZ', { minimumFractionDigits: 2 })}</b></td>
                 </tr>
             `;
-            });
+                });
 
-            const printArea = document.getElementById('print-area');
-            printArea.innerHTML = `
+                const printArea = document.getElementById('print-area');
+                printArea.innerHTML = `
             <div class="report-header">
                 <h2>KASSA DAFTARI (5010)</h2>
                 <p>Jami aylama va qoldiq hisoboti</p>
@@ -1048,14 +1194,124 @@
                 <div>Bosh hisobchi: _________________</div>
             </div>
         `;
-            document.getElementById('print-overlay').style.display = 'flex';
+                document.getElementById('print-overlay').style.display = 'flex';
+            }
+
+            function closePrint() {
+                document.getElementById('print-overlay').style.display = 'none';
+            }
+        </script>
+
+    </body>
+
+    <script>
+        // --- QUIZ LOGIC (MINI-TRENAJYOR) ---
+        const quizQuestions = [
+            { q: "Bankdan kassaga naqd pul kelib tushdi (10,000,000 so'm)", dt: "5010", kt: "5110", sum: 10000000 },
+            { q: "Ta'sischidan Ustav kapitaliga naqd pul tushdi (5,000,000 so'm)", dt: "5010", kt: "4610", sum: 5000000 },
+            { q: "Xaridor (Mijoz) maxsulot uchun naqd to'lov qildi (2,000,000 so'm)", dt: "5010", kt: "4010", sum: 2000000 },
+            { q: "Moddiy javobgar shaxsdan kamomat undirildi (300,000 so'm)", dt: "5010", kt: "4730", sum: 300000 },
+            { q: "Kassadan bankka naqd pul topshirildi (Inkassatsiya) (8,000,000 so'm)", dt: "5110", kt: "5010", sum: 8000000 },
+            { q: "Xodimlarga ish haqi naqd pulda tarqatildi (4,000,000 so'm)", dt: "6710", kt: "5010", sum: 4000000 },
+            { q: "Yetkazib beruvchiga naqd pulda to'lov qilindi (1,500,000 so'm)", dt: "6010", kt: "5010", sum: 1500000 },
+            { q: "Xizmat safari uchun xodimga bo'nak (avans) berildi (600,000 so'm)", dt: "4220", kt: "5010", sum: 600000 },
+            { q: "Ijara haqi uchun naqd to'lov qilindi (500,000 so'm)", dt: "6910", kt: "5010", sum: 500000 },
+            { q: "Kassada ortiqcha mablag' (kirim) aniqlandi (50,000 so'm)", dt: "5010", kt: "9390", sum: 50000 }
+        ];
+
+        let currentQIndex = 0;
+
+        function openQuiz() {
+            currentQIndex = 0;
+            document.getElementById('quiz-modal').style.display = 'flex';
+            loadQuestion();
         }
 
-        function closePrint() {
-            document.getElementById('print-overlay').style.display = 'none';
+        function closeQuiz() {
+            document.getElementById('quiz-modal').style.display = 'none';
+        }
+
+        function loadQuestion() {
+            if (currentQIndex >= quizQuestions.length) {
+                document.getElementById('quiz-content').innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h2 style="color:#10b981;">🎉 Tabriklaymiz!</h2>
+                            <p>Siz barcha savollarni muvaffaqiyatli yakunladingiz.</p>
+                            <button onclick="closeQuiz()" class="btn submit-btn">Yopish</button>
+                            <button onclick="openQuiz()" class="btn submit-btn" style="background:#6b7280; margin-top:10px;">Qayta ishlash</button>
+                        </div>
+                    `;
+                return;
+            }
+
+            const q = quizQuestions[currentQIndex];
+            document.getElementById('q-text').innerText = `${currentQIndex + 1}-Savol: ${q.q}`;
+            document.getElementById('q-dt').value = '';
+            document.getElementById('q-kt').value = '';
+            document.getElementById('q-sum').value = '';
+            document.getElementById('q-feedback').innerText = '';
+            document.getElementById('q-feedback').style.display = 'none';
+        }
+
+        function checkAnswer() {
+            const dt = document.getElementById('q-dt').value.trim();
+            const kt = document.getElementById('q-kt').value.trim();
+            const sum = parseFloat(document.getElementById('q-sum').value) || 0;
+
+            const target = quizQuestions[currentQIndex];
+            const feedback = document.getElementById('q-feedback');
+
+            if (dt === target.dt && kt === target.kt && sum === target.sum) {
+                feedback.innerHTML = '<span style="color:green; font-weight:bold;">✅ Javob to\'g\'ri!</span>';
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    currentQIndex++;
+                    loadQuestion();
+                }, 1000);
+            } else {
+                feedback.innerHTML = `<span style="color:red; font-weight:bold;">❌ Xato!</span><br>To'g'ri javob: Dt ${target.dt}, Kt ${target.kt}, Summa: ${target.sum.toLocaleString()}`;
+                feedback.style.display = 'block';
+            }
         }
     </script>
 
+    <!-- QUIZ MODAL -->
+    <div class="modal-overlay" id="quiz-modal" style="display:none; z-index:9999;">
+        <div class="modal" style="max-width:500px; text-align:left;" id="quiz-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2 style="margin:0; color:#8b5cf6;">🧠 Bilimni Sinash</h2>
+                <button onclick="closeQuiz()"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <div style="background:#f3f4f6; padding:15px; border-radius:8px; margin-bottom:20px; font-weight:bold; color:#1f2937;"
+                id="q-text">
+                Savol yuklanmoqda...
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div>
+                    <label style="font-size:0.8rem; font-weight:bold;">Debet (Schyot)</label>
+                    <input type="text" id="q-dt" placeholder="Mas: 5010">
+                </div>
+                <div>
+                    <label style="font-size:0.8rem; font-weight:bold;">Kredit (Schyot)</label>
+                    <input type="text" id="q-kt" placeholder="Mas: 5110">
+                </div>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="font-size:0.8rem; font-weight:bold;">Summa</label>
+                <input type="number" id="q-sum" placeholder="So'mda kiriting">
+            </div>
+
+            <div id="q-feedback"
+                style="margin-bottom:15px; padding:10px; background:#fff; border:1px solid #ccc; border-radius:6px; display:none;">
+            </div>
+
+            <button onclick="checkAnswer()" class="btn submit-btn"
+                style="width:100%; background:#8b5cf6; color:white;">Tekshirish</button>
+        </div>
+    </div>
 </body>
 
 </html>
